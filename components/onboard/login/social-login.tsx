@@ -1,8 +1,10 @@
 "use client";
 import { signIn, useSession, signOut } from "next-auth/react";
+import { useDisconnect } from "wagmi";
 
 function SocialLogin() {
   const { data: session } = useSession();
+  const { disconnect } = useDisconnect();
 
   const onClickGoogle = async () => {
     const result = await signIn("google", );
@@ -16,6 +18,19 @@ function SocialLogin() {
       // 필요한 경우 추가적인 로직 수행
     }
   };
+
+  const onClickSignout = () => {
+    signOut();
+    disconnect();
+  }
+
+  if (session) {
+    return (
+      <div>
+        <button onClick={onClickSignout}>지갑 연동 해제</button>
+      </div>
+    );
+  }
 
   return (
     <>
