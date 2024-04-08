@@ -21,9 +21,9 @@ const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       // Send properties to the client, like an access_token from a provider.
-      if (session?.user) {
-        session.user.id_token = token.id_token;
-      }
+      // if (session?.user) {
+      //   session.user.id_token = token.id_token;
+      // }
       return session;
     },
   },
