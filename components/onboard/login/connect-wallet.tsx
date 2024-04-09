@@ -12,10 +12,10 @@ function ConnectWallet() {
     // console.log(connectors);
   };
 
-  const onClickConnectWeb3auth = async () => {
-    const result = await connectAsync({ connector: connectors[1] });
-    console.log(result);
-  };
+  // const onClickConnectWeb3auth = async () => {
+  //   const result = await connectAsync({ connector: connectors[1] });
+  //   console.log(result);
+  // };
 
   const onClickConnectMetamask = async () => {
     console.log(connectors);
@@ -43,7 +43,6 @@ function ConnectWallet() {
 
       <button onClick={onClickConnectWepin}>wepin 연결</button>
 
-      <button onClick={onClickConnectWeb3auth}>web3auth 연결</button>
 
       <button onClick={onClickConnectMetamask}>metamask 연결</button>
       </div>
