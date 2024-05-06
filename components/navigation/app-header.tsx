@@ -9,6 +9,14 @@ import { Image } from "@chakra-ui/react";
 export default function AppHeader() {
   const [userAddress, setUserAddress] = useState("");
 
+  useEffect(() => {
+    const connectedAddress = localStorage.getItem('connectedAddress');
+    if (connectedAddress) {
+        setUserAddress(connectedAddress);
+    }
+}, []);
+
+
   const onClickConnectWallet = async () => {
     if (window.ethereum) {
       try {
@@ -16,6 +24,7 @@ export default function AppHeader() {
         const accounts = await provider.send("eth_requestAccounts", []);
         const account = ethers.getAddress(accounts[0]);
         setUserAddress(account);
+        localStorage.setItem('connectedAddress', account); // 상태 저장
       } catch (error) {
         console.error(error);
       }
@@ -23,6 +32,11 @@ export default function AppHeader() {
       alert("MetaMask is not installed. Please install it to use this app.");
     }
   };
+
+  const disconnectWalletHandler = () => {
+    setUserAddress('');
+    localStorage.removeItem('connectedAddress'); // 상태 업데이트
+};
 
   return (
     <header className="px-4 py-3 shadow-md flex justify-between items-center">
