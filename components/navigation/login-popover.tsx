@@ -41,6 +41,9 @@ export default function LoginPopover({
 
       <PopoverContent color="white" bg="blue.800" borderColor="blue.800">
         <PopoverHeader pt={4} fontWeight="bold" border="0">
+            <div>
+                Hi!
+            </div>
           {userAddress}
         </PopoverHeader>
 
@@ -57,7 +60,7 @@ export default function LoginPopover({
         >
           <ButtonGroup size="sm">
             <Button colorScheme="blue" onClick={onClickLogout}>
-              Logout
+              지갑 연결 해제
             </Button>
           </ButtonGroup>
         </PopoverFooter>
