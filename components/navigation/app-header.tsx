@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ethers } from "ethers";
+import { ethers, formatEther } from "ethers";
 
 import { Button, ButtonGroup } from "@chakra-ui/react";
 import { Image } from "@chakra-ui/react";
@@ -10,12 +10,15 @@ import LoginPopover from "./login-popover";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function AppHeader() {
-  const [userAddress, setUserAddress] = useState("");
+  const [userInfo, setUserInfo] = useState({
+    address: "",
+    balance: "",
+  }); // 사용자 정보
 
   useEffect(() => {
     const connectedAddress = localStorage.getItem("connectedAddress");
     if (connectedAddress) {
-      setUserAddress(connectedAddress);
+      setUserInfo({ ...userInfo, address: connectedAddress });
     }
   }, []);
 
@@ -24,10 +27,17 @@ export default function AppHeader() {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const accounts = await provider.send("eth_requestAccounts", []);
+
+        // 지갑주소
         const account = ethers.getAddress(accounts[0]);
-        setUserAddress(account);
+
         localStorage.setItem("connectedAddress", account); // 상태 저장
 
+        const balanceWei = await provider.getBalance(account);
+        const balanceEther = formatEther(balanceWei);
+        setUserInfo({ address: account, balance: balanceEther });
+
+        // 지갑잔액
         const { data, error } = await supabase.from("users").upsert(
           {
             id: account, // 고유한 지갑 주소를 사용자 ID로 사용
@@ -40,7 +50,6 @@ export default function AppHeader() {
 
         if (error) throw error;
         console.log("Logged in with Supabase using wallet!");
-
       } catch (error) {
         console.error(error);
       }
@@ -50,7 +59,7 @@ export default function AppHeader() {
   };
 
   const disconnectWalletHandler = () => {
-    setUserAddress("");
+    setUserInfo({ address: "", balance: "" });
     localStorage.removeItem("connectedAddress"); // 상태 업데이트
   };
 
@@ -58,9 +67,10 @@ export default function AppHeader() {
     <header className="px-4 py-3 shadow-md flex justify-between items-center">
       <Image src="/favicon.png" alt="logo" width="8" height="8" />
 
-      {userAddress ? (
+      {userInfo.address ? (
         <LoginPopover
-          userAddress={userAddress}
+          userInfo={userInfo}
+          onClickTrigger={onClickConnectWallet}
           onClickLogout={disconnectWalletHandler}
         />
       ) : (

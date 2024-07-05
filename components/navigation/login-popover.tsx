@@ -1,3 +1,6 @@
+import { useCopyToClipboard, shortenAddress } from "@/util/util";
+import { CopyIcon } from "@chakra-ui/icons";
+
 import {
   Box,
   Button,
@@ -11,43 +14,41 @@ import {
   PopoverHeader,
   PopoverTrigger,
 } from "@chakra-ui/react";
-import { useRef } from "react";
 
 export default function LoginPopover({
-  userAddress,
+  userInfo,
+  onClickTrigger,
   onClickLogout,
 }: {
-  userAddress: string;
+  userInfo: { address: string;  balance: string };
+  onClickTrigger: () => void;
   onClickLogout: () => void;
 }) {
-  const initialFocusRef = useRef();
-
-  // 긴 텍스트의 첫 다섯글자와, 마지막 다섯글자만 보이는 함수
-  const shortenAddress = (address: string) => {
-    return `${address.substring(0, 5)}...${address.substring(
-      address.length - 5
-    )}`;
-  };
+  const copyTextToClipboard = useCopyToClipboard();
 
   return (
-    <Popover
-      //   initialFocusRef={initialFocusRef}
-      placement="bottom"
-      closeOnBlur={false}
-    >
+    <Popover placement="bottom" closeOnBlur={false}>
       <PopoverTrigger>
-        <Button>{shortenAddress(userAddress)}</Button>
+        <Button onClick={onClickTrigger}>{shortenAddress(userInfo.address)}</Button>
       </PopoverTrigger>
 
       <PopoverContent color="white" bg="blue.800" borderColor="blue.800">
         <PopoverHeader pt={4} fontWeight="bold" border="0">
-            <div>
-                Hi!
-            </div>
-          {userAddress}
+          <div>USERNAME</div>
         </PopoverHeader>
 
         <PopoverArrow bg="blue.800" />
+
+        <PopoverBody>
+          <div className="flex gap-2 items-center">
+            <div>{shortenAddress(userInfo.address)}</div>{" "}
+            <CopyIcon onClick={() => copyTextToClipboard(userInfo.address)}>
+              복사
+            </CopyIcon>
+          </div>
+
+          <div>{userInfo.balance} ETH</div>
+        </PopoverBody>
 
         <PopoverCloseButton />
 
